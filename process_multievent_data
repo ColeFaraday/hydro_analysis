@@ -1,27 +1,28 @@
-#!/usr/bin/sh
-# Script to process data and output temperature contour (and other stuff that I don't use). The temperature contour is output in a different format to the original codes implementation (t,x,y,T).
+#!/usr/bin/env sh
+# Script to process data and output temperature contour (and other stuff that I don't use).
+# The temperature contour is output in a different format to the original code's implementation (t,x,y,T).
 
-cd $1
-cd ..
-mv $1 results/
-# make directory with the same name as the input directory (basename)
-input = "$1"
-bn = $(basename "$input")
+codeDir=$(pwd)
+
+input="$1"
+inputAbs=$(realpath "$input") # Get absolute path of input directory
+bn=$(basename "$input")
+
+cd "$(dirname "$inputAbs")" || exit 1
+
+mv "$bn" results/
 mkdir "$bn"
 mv results "$bn/"
 
-cd "$bn/results"
+cd "$bn/results" || exit 1
 ls > ../event_names.dat
 
-for f in */
-do
-    cd $f
-    mkdir results
-    mv *.dat ./results/
-    cp ../../../hydro_analysis.e ./hydro_analysis.e
-    cp ../../../parameters.dat ./parameters.dat
+for f in */; do
+    cd "$f" || continue
+    mkdir -p results
+    mv *.dat results/
+    cp "$codeDir/hydro_analysis.e" .
+    cp "$codeDir/parameters.dat" .
     ./hydro_analysis.e
     cd ..
 done
-
-
