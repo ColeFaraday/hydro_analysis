@@ -18,3 +18,13 @@ MUSIC outputs.
 
 To do:
 * add cmake compile files
+
+
+# Usage (Cole)
+
+Note that on Windows one must first install [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) to run the bash scripts.
+
+1. Copy template_hydro and rename suitably
+2. Copy the output of [iebe-MUSIC](https://github.com/chunshen1987/iEBE-MUSIC) into `./results/`
+3. Change `./parameters.dat` for suitable grid spacing
+4. Run `process_multievent_data <IEBE MUSIC FOLDER NAME>`
