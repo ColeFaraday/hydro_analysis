@@ -448,7 +448,7 @@ void FluidcellStatistic::outputTempasTauvsX() {
                         x_local, y_local, 0.0, tau_local, fluidCellptr);
             }
             double temp_local = fluidCellptr->temperature;
-            if (temp_local > 0.05)
+            if (temp_local > T_dec)
                 output << temp_local << "   " ;
             else
                 output << 0.0 << "   " ;
