@@ -425,13 +425,13 @@ void FluidcellStatistic::outputTempasTauvsX() {
         grid_tauf = hydroinfo_MUSIC_ptr->get_hydro_tau_max();
         grid_x0 = (- hydroinfo_MUSIC_ptr->get_hydro_x_max()
                    + hydroinfo_MUSIC_ptr->get_hydro_dx());
-        grid_y0 = (- hydroinfo_MUSIC_ptr->get_hydro_y_max()
-                     + hydroinfo_MUSIC_ptr->get_hydro_dy());
+        grid_y0 = (- hydroinfo_MUSIC_ptr->get_hydro_x_max()
+                     + hydroinfo_MUSIC_ptr->get_hydro_dx()); // Assumes that the grid is symmetric in x and y
     }
 
     int ntime = static_cast<int>((grid_tauf - grid_tau0)/grid_dt) + 1;
     int nx = static_cast<int>(fabs(2.*grid_x0)/grid_dx) + 1;
-    int ny = static_cast<int>(fabs(2.*grid_y0)/grid_dy) + 1;
+    int ny = nx;
 
     double tau_local;
     fluidCell* fluidCellptr = new fluidCell();
