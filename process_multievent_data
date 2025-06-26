@@ -4,7 +4,13 @@
 cd $1
 cd ..
 mv $1 results/
-cd results/
+# make directory with the same name as the input directory (basename)
+input = "$1"
+bn = $(basename "$input")
+mkdir "$bn"
+mv results "$bn/"
+
+cd "$bn/results"
 ls > ../event_names.dat
 
 for f in */
