@@ -431,6 +431,7 @@ void FluidcellStatistic::outputTempasTauvsX() {
 
     int ntime = static_cast<int>((grid_tauf - grid_tau0)/grid_dt) + 1;
     int nx = static_cast<int>(fabs(2.*grid_x0)/grid_dx) + 1;
+    int ny = static_cast<int>(fabs(2.*grid_y0)/grid_dy) + 1;
 
     double tau_local;
     fluidCell* fluidCellptr = new fluidCell();
@@ -441,7 +442,7 @@ void FluidcellStatistic::outputTempasTauvsX() {
         // loop over time evolution
         tau_local = grid_tau0 + itime*grid_dt;
         for (int i = 0; i < nx; i++) {
-            for (int j = 0; j < 1; j++) {
+            for (int j = 0; j < ny; j++) {
             // loops over the transverse plane
             double x_local = grid_x0 + i*grid_dx;
             double y_local = grid_y0 + j * grid_dy;
