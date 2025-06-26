@@ -1,6 +1,8 @@
 #!/usr/bin/sh
 # Script to process data and output temperature contour (and other stuff that I don't use). The temperature contour is output in a different format to the original codes implementation (t,x,y,T).
 
+cd $1
+cd ..
 mv $1 results/
 cd results/
 ls > ../event_names.dat
