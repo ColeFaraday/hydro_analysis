@@ -23,6 +23,7 @@ FluidcellStatistic::FluidcellStatistic(void* hydroinfo_ptr_in,
         hydroinfo_MUSIC_ptr = (Hydroinfo_MUSIC*) hydroinfo_ptr_in;
     }
     T_dec = paraRdr->getVal("T_cut");
+    T_output_cut = paraRdr->getVal("T_output_cut");
     grid_dt = paraRdr->getVal("grid_dt");
     grid_dx = paraRdr->getVal("grid_dx");
     grid_dy = paraRdr->getVal("grid_dy");
@@ -448,7 +449,7 @@ void FluidcellStatistic::outputTempasTauvsX() {
                         x_local, y_local, 0.0, tau_local, fluidCellptr);
             }
             double temp_local = fluidCellptr->temperature;
-            if (temp_local > T_dec)
+            if (temp_local > T_output_cut)
                 output << temp_local << "   " ;
             else
                 output << 0.0 << "   " ;

@@ -22,6 +22,7 @@ class FluidcellStatistic {
     Hydroinfo_MUSIC *hydroinfo_MUSIC_ptr;
     ParameterReader *paraRdr;
     double T_dec;
+    double T_output_cut;
     double hbarC;
     double grid_dt, grid_dx, grid_dy;
 
