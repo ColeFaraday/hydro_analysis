@@ -414,15 +414,19 @@ void FluidcellStatistic::outputTempasTauvsX() {
          << "tau and x ... " << endl;
     double grid_tau0, grid_tauf;
     double grid_x0;
+    double grid_y0;
     if (hydro_type == 0) {
         grid_tau0 = hydroinfo_ptr->getHydrogridTau0();
         grid_tauf = hydroinfo_ptr->getHydrogridTaumax();
         grid_x0 = - hydroinfo_ptr->getHydrogridXmax();
+        grid_y0 = - hydroinfo_ptr->getHydrogridYmax();
     } else {
         grid_tau0 = hydroinfo_MUSIC_ptr->get_hydro_tau0();
         grid_tauf = hydroinfo_MUSIC_ptr->get_hydro_tau_max();
         grid_x0 = (- hydroinfo_MUSIC_ptr->get_hydro_x_max()
                    + hydroinfo_MUSIC_ptr->get_hydro_dx());
+        grid_y0 = (- hydroinfo_MUSIC_ptr->get_hydro_y_max()
+                     + hydroinfo_MUSIC_ptr->get_hydro_dy());
     }
 
     int ntime = static_cast<int>((grid_tauf - grid_tau0)/grid_dt) + 1;
@@ -437,9 +441,10 @@ void FluidcellStatistic::outputTempasTauvsX() {
         // loop over time evolution
         tau_local = grid_tau0 + itime*grid_dt;
         for (int i = 0; i < nx; i++) {
+            for (int j = 0; j < 1; j++) {
             // loops over the transverse plane
             double x_local = grid_x0 + i*grid_dx;
-            double y_local = 0.0;
+            double y_local = grid_y0 + j * grid_dy;
             // get hydro information
             if (hydro_type == 0) {
                 hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
@@ -453,6 +458,7 @@ void FluidcellStatistic::outputTempasTauvsX() {
                 output << tau_local << " " << x_local << " " << y_local << " " << temp_local << "\n";
             // else
             //     output << 0.0 << "   " ;
+            }
         }
         output << endl;
     }
