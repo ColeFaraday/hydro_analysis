@@ -16,3 +16,5 @@ grid_dy = 0.1        # lattice spacing in y (fm). Use 0.1 for small systematics 
 load_viscous_info = 0  # switch to load dissipative information
 T_cut = 0.155      # desired temperature for hyper-surface determination (GeV)
 T_output_cut = 0.155 # don't save temperature below 0.155 (GeV)
+
+files_to_delete =   # comma-separated list of files to delete after hydro_analysis.e, e.g. file1.txt,file2.dat
