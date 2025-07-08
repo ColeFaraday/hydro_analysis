@@ -24,5 +24,6 @@ for f in */; do
     cp "$codeDir/hydro_analysis.e" .
     cp "$codeDir/parameters.dat" .
     ./hydro_analysis.e
+    rm hydro_analysis.e
     cd ..
 done
