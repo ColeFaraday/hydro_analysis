@@ -2,7 +2,7 @@
 # Script to process data and output temperature contour (and other stuff that I don't use).
 # The temperature contour is output in a different format to the original code's implementation (t,x,y,T).
 
-codeDir=$(pwd)
+codeDir=$(cd "$(dirname "$0")" && pwd)
 
 input="$1"
 inputAbs=$(realpath "$input") # Get absolute path of input directory
