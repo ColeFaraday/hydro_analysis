@@ -4,6 +4,8 @@
 
 codeDir=$(cd "$(dirname "$0")" && pwd)
 
+echo "codeDir: $codeDir"
+
 input="$1"
 inputAbs=$(realpath "$input") # Get absolute path of input directory
 bn=$(basename "$input")
