@@ -17,4 +17,4 @@ load_viscous_info = 0  # switch to load dissipative information
 T_cut = 0.155      # desired temperature for hyper-surface determination (GeV)
 T_output_cut = 0.155 # don't save temperature below 0.155 (GeV)
 
-files_to_delete =   # comma-separated list of files to delete after hydro_analysis.e, e.g. file1.txt,file2.dat
+files_to_delete = evolution_all_xyeta.dat,inverseReynoldsNumberasTauvsX.dat,KnudsenNumberasTauvsX.dat,run.err,surface_eps_0.18.dat,tau_vs_v.dat,T_vs_v.dat # comma-separated list of files to delete after hydro_analysis.e, e.g. file1.txt,file2.dat. Used for removing the files related to physics that is not being considered in the current analysis.
