@@ -27,13 +27,13 @@ for f in */; do
     cp "$codeDir/parameters.dat" .
     ./hydro_analysis.e
     rm hydro_analysis.e
-    # Delete files listed in files_to_delete parameter
-    files_to_delete=$(grep '^files_to_delete' parameters.dat | cut -d'=' -f2 | cut -d'#' -f1 | tr -d ' ')
-    if [ -n "$files_to_delete" ]; then
-        IFS=',' read -ra files <<< "$files_to_delete"
-        for del_file in "${files[@]}"; do
-            [ -n "$del_file" ] && rm -f "$del_file"
-        done
-    fi
+    # # Delete files listed in files_to_delete parameter
+    # files_to_delete=$(grep '^files_to_delete' parameters.dat | cut -d'=' -f2 | cut -d'#' -f1 | tr -d ' ')
+    # if [ -n "$files_to_delete" ]; then
+    #     IFS=',' read -ra files <<< "$files_to_delete"
+    #     for del_file in "${files[@]}"; do
+    #         [ -n "$del_file" ] && rm -f "$del_file"
+    #     done
+    # fi
     cd ..
 done
