@@ -80,6 +80,15 @@ if [[ -d "HYDRO_RESULTS" ]]; then
     if [[ -d "$subdir" ]]; then
       echo "Processing subdirectory: $subdir"
       ~/hydro/hydro_analysis/process_multievent_data "$subdir" "$threads"
+      
+      # Get Qn vectors for this subdirectory
+      if [[ -d "$subdir/results" ]]; then
+        subdir_name=$(basename "$subdir")
+        echo "Getting Qn vectors for: $subdir_name"
+        ~/hydro/iEBE-MUSIC/utilities/get_Qnvectors.sh "$subdir/results" "${subdir_name}.h5"
+      else
+        echo "Warning: results directory not found in $subdir"
+      fi
     fi
   done
 else
@@ -88,8 +97,7 @@ fi
 
 popd > /dev/null
 
-# echo "${target_dir##*/}.h5"
+echo "Processing complete for: ${target_dir##*/}"
 
-# Step 3 and 4 are optional and can be uncommented when needed
-# ~/hydro/iEBE-MUSIC/utilities/get_Qnvectors.sh "$target_dir/HYDRO_RESULTS/results" "${target_dir##*/}.h5"
-# python3 average_event_spvn_h5_minimumbias.py "${target_dir##*/}.h5" "$target_ditarget_dirr/analysis"
+# Run analysis on the main target directory
+python3 average_event_spvn_h5_minimumbias.py "${target_dir##*/}.h5" "$target_dir/analysis"
