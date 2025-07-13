@@ -60,6 +60,14 @@ mkdir -p "$output_folder"
 ~/hydro/iEBE-MUSIC/utilities/collect_events.sh "$original_folder" "$output_folder"
 
 # Categorize centrality based on midrapidity multiplicity
+# Check if URQMD_RESULTS directory exists and is empty, then delete it
+if [[ -d "$target_dir/URQMD_RESULTS" ]]; then
+  if [[ -z "$(ls -A "$target_dir/URQMD_RESULTS" 2>/dev/null)" ]]; then
+    echo "Removing empty URQMD_RESULTS directory"
+    rm -rf "$target_dir/URQMD_RESULTS"
+  fi
+fi
+
 ~/hydro/iEBE-MUSIC/utilities/split_into_centralities.py "$target_dir"
 
 
