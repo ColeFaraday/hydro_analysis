@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+
+# Usage:
+#   ./prepare_results_dir.sh [--overwrite] [--threads N] <original_folder> <output_folder>
+
+set -euo pipefail
+
+# Defaults
+overwrite=false
+threads=1
+
+# Parse options
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --overwrite)
+      overwrite=true
+      shift
+      ;;
+    --threads|-t)
+      threads="$2"
+      shift 2
+      ;;
+    -*)
+      echo "Unknown option: $1"
+      exit 1
+      ;;
+    *)
+      positional+=("$1")
+      shift
+      ;;
+  esac
+done
+
+# Restore positional parameters
+set -- "${positional[@]:-}"
+
+if [[ $# -ne 2 ]]; then
+  echo "Usage: $0 [--overwrite] [--threads N] <original_folder> <output_folder>"
+  exit 1
+fi
+
+original_folder="${1%/}"
+output_folder="${2%/}"
+base_name="$(basename "$original_folder")"
+target_dir="$output_folder/$base_name"
+
+# Check if target directory exists
+if [[ -d "$output_folder" && $overwrite == false ]]; then
+  read -p "Output folder '$output_folder' exists. Overwrite? [y/N] " confirm
+  if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+    echo "Aborting."
+    exit 1
+  fi
+fi
+
+rm -rf "$output_folder"
+mkdir -p "$output_folder"
+
+# Collect events into results folder
+~/hydro/iEBE-MUSIC/utilities/collect_events.sh "$original_folder" "$output_folder"
+
+# Categorize centrality based on midrapidity multiplicity
+~/hydro/iEBE-MUSIC/utilities/split_into_centralities.py "$target_dir"
+
+
+# pushd "$target_dir" > /dev/null
+# pwd
+# ~/hydro/hydro_analysis/process_multievent_data HYDRO_RESULTS/ "$threads"
+# popd > /dev/null
+
+# echo "${target_dir##*/}.h5"
+
+# Step 3 and 4 are optional and can be uncommented when needed
+# ~/hydro/iEBE-MUSIC/utilities/get_Qnvectors.sh "$target_dir/HYDRO_RESULTS/results" "${target_dir##*/}.h5"
+# python3 average_event_spvn_h5_minimumbias.py "${target_dir##*/}.h5" "$target_ditarget_dirr/analysis"
