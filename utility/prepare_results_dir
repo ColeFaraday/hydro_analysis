@@ -85,7 +85,7 @@ if [[ -d "HYDRO_RESULTS" ]]; then
       if [[ -d "$subdir/results" ]]; then
         subdir_name=$(basename "$subdir")
         echo "Getting Qn vectors for: $subdir_name"
-        ~/hydro/iEBE-MUSIC/utilities/get_Qnvectors.sh "$subdir/results" "${subdir_name}.h5"
+        ~/hydro/iEBE-MUSIC/utilities/get_Qnvectors.sh "$subdir/results" "${target_dir##*/}.h5"
       else
         echo "Warning: results directory not found in $subdir"
       fi
