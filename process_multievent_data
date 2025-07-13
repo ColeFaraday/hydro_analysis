@@ -2,50 +2,127 @@
 # Script to process data and output temperature contour (and other stuff that I don't use).
 # The temperature contour is output in a different format to the original code's implementation (t,x,y,T).
 
-codeDir=$(cd "$(dirname "$0")" && pwd)
+# Exit on any error
+set -e
 
+codeDir=$(cd "$(dirname "$0")" && pwd)
 echo "codeDir: $codeDir"
 
 input="$1"
-max_jobs="${2:-1}"  # Set from second argument, default to 8
+max_jobs="${2:-1}"  # Set from second argument, default to 1
+
+# Validate inputs
+if [ -z "$input" ]; then
+    echo "Error: Input directory required" >&2
+    exit 1
+fi
+
+if [ ! -d "$input" ]; then
+    echo "Error: Input directory '$input' does not exist" >&2
+    exit 1
+fi
+
+if ! [ "$max_jobs" -gt 0 ] 2>/dev/null; then
+    echo "Error: max_jobs must be a positive integer" >&2
+    exit 1
+fi
+
 inputAbs=$(realpath "$input") # Get absolute path of input directory
 bn=$(basename "$input")
 
+# Move to parent directory and restructure
 cd "$(dirname "$inputAbs")" || exit 1
-
 mv "$bn" results/
 mkdir "$bn"
 mv results "$bn/"
-
 cd "$bn/results" || exit 1
+
+# Create event names list
 ls > ../event_names.dat
 
-job_count=0
+# Check if required files exist
+if [ ! -f "$codeDir/hydro_analysis.e" ]; then
+    echo "Error: hydro_analysis.e not found in $codeDir" >&2
+    exit 1
+fi
 
-for f in */; do
-    (
-        cd "$f" || exit 1
-        mkdir -p results
+if [ ! -f "$codeDir/parameters.dat" ]; then
+    echo "Error: parameters.dat not found in $codeDir" >&2
+    exit 1
+fi
+
+# Function to process a single directory
+process_directory() {
+    local dir="$1"
+    local codeDir="$2"
+    
+    echo "Processing directory: $dir"
+    
+    cd "$dir" || {
+        echo "Error: Cannot enter directory $dir" >&2
+        return 1
+    }
+    
+    # Create results directory and move data files
+    mkdir -p results
+    if ls *.dat >/dev/null 2>&1; then
         mv *.dat results/
-        cp "$codeDir/hydro_analysis.e" .
-        cp "$codeDir/parameters.dat" .
-        ./hydro_analysis.e
-        rm hydro_analysis.e
-        # # Delete files listed in files_to_delete parameter
-        # files_to_delete=$(grep '^files_to_delete' parameters.dat | cut -d'=' -f2 | cut -d'#' -f1 | tr -d ' ')
-        # if [ -n "$files_to_delete" ]; then
-        #     IFS=',' read -ra files <<< "$files_to_delete"
-        #     for del_file in "${files[@]}"; do
-        #         [ -n "$del_file" ] && rm -f "$del_file"
-        #     done
-        # fi
-        cd ..
-    ) &
-    job_count=$((job_count+1))
-    if [ "$job_count" -ge "$max_jobs" ]; then
-        wait -n  # Wait for any job to finish
-        job_count=$((job_count-1))
     fi
+    
+    # Copy required files
+    cp "$codeDir/hydro_analysis.e" . || {
+        echo "Error: Failed to copy hydro_analysis.e to $dir" >&2
+        return 1
+    }
+    
+    cp "$codeDir/parameters.dat" . || {
+        echo "Error: Failed to copy parameters.dat to $dir" >&2
+        return 1
+    }
+    
+    # Run analysis
+    ./hydro_analysis.e || {
+        echo "Error: hydro_analysis.e failed in $dir" >&2
+        return 1
+    }
+    
+    # Cleanup
+    rm -f hydro_analysis.e
+    
+    # Optional: Delete files listed in files_to_delete parameter
+    # files_to_delete=$(grep '^files_to_delete' parameters.dat | cut -d'=' -f2 | cut -d'#' -f1 | tr -d ' ')
+    # if [ -n "$files_to_delete" ]; then
+    #     IFS=',' read -ra files <<< "$files_to_delete"
+    #     for del_file in "${files[@]}"; do
+    #         [ -n "$del_file" ] && rm -f "$del_file"
+    #     done
+    # fi
+    
+    echo "Completed processing: $dir"
+    return 0
+}
 
+# Export function and variables for subshells
+export -f process_directory
+export codeDir
+
+# Collect all directories to process
+directories=""
+for f in */; do
+    if [ -d "$f" ]; then
+        directories="$directories$(realpath "$f")\n"
+    fi
 done
-wait  # Wait for all background jobs to finish
+
+if [ -z "$directories" ]; then
+    echo "No directories found to process"
+    exit 0
+fi
+
+# Process directories in parallel using proper job control
+echo "Starting parallel processing with max $max_jobs jobs..."
+
+# Use printf to handle the directory list properly and xargs for robust parallel execution
+printf "$directories" | xargs -I {} -P "$max_jobs" -n 1 sh -c 'process_directory "$@"' _ {}
+
+echo "All processing completed successfully!"
