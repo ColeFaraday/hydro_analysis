@@ -98,6 +98,9 @@ fi
 
 
 # Run analysis on the main target directory
-python3 average_event_spvn_h5_minimumbias.py "${target_dir##*/}.h5" "$target_dir/analysis"
+popd > /dev/null
 
+
+pushd ~/hydro/hadronic_afterburner_toolkit/ > /dev/null
+average_event_spvn_h5_minimumbias.py "${target_dir##*/}.h5" "$target_dir/analysis"
 popd > /dev/null
