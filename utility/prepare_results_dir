@@ -102,5 +102,6 @@ popd > /dev/null
 
 
 pushd ~/hydro/hadronic_afterburner_toolkit/ > /dev/null
+mkdir "$target_dir/analysis"
 average_event_spvn_h5_minimumbias.py "${target_dir##*/}.h5" "$target_dir/analysis"
 popd > /dev/null
