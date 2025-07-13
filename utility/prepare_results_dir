@@ -85,8 +85,8 @@ if [[ -d "HYDRO_RESULTS" ]]; then
       if [[ -d "$subdir/results" ]]; then
         subdir_name=$(basename "$subdir")
         echo "Getting Qn vectors for: $subdir_name"
-				echo "${target_dir##*/}.h5"
         ~/hydro/iEBE-MUSIC/utilities/get_Qnvectors.sh "$subdir/results" "${target_dir##*/}.h5"
+				~/hydro/iEBE-MUSIC/utilities/clean_event_dirs.sh "$subdir/results"
       else
         echo "Warning: results directory not found in $subdir"
       fi
@@ -97,8 +97,6 @@ else
 fi
 
 popd > /dev/null
-
-echo "Processing complete for: ${target_dir##*/}"
 
 # Run analysis on the main target directory
 python3 average_event_spvn_h5_minimumbias.py "${target_dir##*/}.h5" "$target_dir/analysis"
