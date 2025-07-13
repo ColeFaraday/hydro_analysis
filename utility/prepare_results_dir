@@ -71,10 +71,22 @@ fi
 ~/hydro/iEBE-MUSIC/utilities/split_into_centralities.py "$target_dir"
 
 
-# pushd "$target_dir" > /dev/null
-# pwd
-# ~/hydro/hydro_analysis/process_multievent_data HYDRO_RESULTS/ "$threads"
-# popd > /dev/null
+pushd "$target_dir" > /dev/null
+pwd
+
+# Process each subdirectory of HYDRO_RESULTS
+if [[ -d "HYDRO_RESULTS" ]]; then
+  for subdir in HYDRO_RESULTS/*/; do
+    if [[ -d "$subdir" ]]; then
+      echo "Processing subdirectory: $subdir"
+      ~/hydro/hydro_analysis/process_multievent_data "$subdir" "$threads"
+    fi
+  done
+else
+  echo "Warning: HYDRO_RESULTS directory not found"
+fi
+
+popd > /dev/null
 
 # echo "${target_dir##*/}.h5"
 
