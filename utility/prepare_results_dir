@@ -96,7 +96,8 @@ else
   echo "Warning: HYDRO_RESULTS directory not found"
 fi
 
-popd > /dev/null
 
 # Run analysis on the main target directory
 python3 average_event_spvn_h5_minimumbias.py "${target_dir##*/}.h5" "$target_dir/analysis"
+
+popd > /dev/null
